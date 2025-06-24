@@ -3,19 +3,22 @@ require('dotenv').config();
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-async function handleMessage(data) {
-  if (data.type === 'email') {
+module.exports = async function handleMessage(job) {
+  if (job.forceFail) {
+    throw new Error('Forced failure for testing');
+  }
+
+  if (job.type === 'email') {
     const msg = {
-      to: data.to,
-      from: process.env.FROM_EMAIL, // must be verified in SendGrid
-      subject: data.subject,
-      text: data.text,
+      to: job.to,
+      from: process.env.FROM_EMAIL, // Must be verified in SendGrid
+      subject: job.subject,
+      text: job.text,
     };
 
     await sgMail.send(msg);
-    console.log('✅ Email sent to', data.to);
+    console.log('✅ Email sent to', job.to);
   } else {
-    console.log('⚠️ Unsupported message type:', data.type);
+    console.log('⚠️ Unsupported message type:', job.type);
   }
-}
-module.exports = handleMessage;
+};
