@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model FailedJob {
+  id           Int      @id @default(autoincrement())
+  to           String
+  type         String
+  subject      String
+  text         String
+  error        String
+  attemptCount Int
+  failedAt     DateTime @default(now())
+}
